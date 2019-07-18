@@ -1,6 +1,10 @@
+<!--
+  ~ Created by Kartik Kumar Gujarati on 7/18/19 6:22 PM
+  ~ Copyright (c) 2019 . All rights reserved.
+  -->
+
 <resources>
     <string name="app_name">SalesforceChallenege</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_search">Search</string>
+    <string name="title_favorites">Favorites</string>
 </resources>
