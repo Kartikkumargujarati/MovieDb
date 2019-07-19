@@ -14,7 +14,7 @@ import com.kartik.salesforcechallenege.R
 import com.kartik.salesforcechallenege.model.Movies
 import kotlinx.android.synthetic.main.movie_list_item.view.*
 
-class MovieListAdapter(private var movies: List<Movies.Movie>, private val onClickListener: OnClickListener) : RecyclerView.Adapter<RecyclerView.ViewHolder?>() {
+class MovieListAdapter(private var movies: ArrayList<Movies.Movie>, private val onClickListener: OnClickListener) : RecyclerView.Adapter<RecyclerView.ViewHolder?>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -27,7 +27,12 @@ class MovieListAdapter(private var movies: List<Movies.Movie>, private val onCli
     }
 
     internal fun setMovies(movies: List<Movies.Movie>) {
-        this.movies = movies
+        this.movies = movies as ArrayList<Movies.Movie>
+        notifyDataSetChanged()
+    }
+
+    fun updateMovies(movies: List<Movies.Movie>) {
+        this.movies.addAll(movies)
         notifyDataSetChanged()
     }
 

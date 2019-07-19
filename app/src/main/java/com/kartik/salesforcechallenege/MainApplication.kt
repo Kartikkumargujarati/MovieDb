@@ -11,7 +11,7 @@ import com.kartik.salesforcechallenege.model.Movies
 class MainApplication : Application() {
 
     private lateinit var lastSearchedMovie: String
-    private lateinit var lastMovieResult: List<Movies.Movie>
+    private lateinit var lastMovieResult: ArrayList<Movies.Movie>
 
     override fun onCreate() {
         super.onCreate()
@@ -31,7 +31,10 @@ class MainApplication : Application() {
         return lastMovieResult
     }
 
+    fun addLastMovieResult(movies: List<Movies.Movie>) {
+        lastMovieResult.addAll(movies)
+    }
     fun setLastMovieResult(movies: List<Movies.Movie>) {
-        lastMovieResult = movies
+        lastMovieResult = movies as ArrayList<Movies.Movie>
     }
 }

@@ -18,6 +18,7 @@ import com.kartik.salesforcechallenege.data.Status
 import com.kartik.salesforcechallenege.data.local.MovieRoomDb
 import com.kartik.salesforcechallenege.data.remote.MovieRemoteServiceImpl
 import com.kartik.salesforcechallenege.model.Movies
+import com.kartik.salesforcechallenege.util.InfiniteScrollListener
 import kotlinx.android.synthetic.main.fragment_search.*
 import kotlinx.android.synthetic.main.fragment_search.view.*
 import kotlinx.android.synthetic.main.movie_list.view.*
@@ -32,6 +33,8 @@ class SearchFragment : Fragment() {
     private lateinit var rootView: View
     private lateinit var adapter: MovieListAdapter
     private var isLoading: Boolean = false
+    private var searchKey: String? = null
+    private var pageNumber: Int = 1
 
 
     override fun onCreateView(
@@ -62,6 +65,7 @@ class SearchFragment : Fragment() {
             rootView.movie_sv.onActionViewExpanded()
             rootView.movie_sv.clearFocus()
             rootView.movie_sv.setQuery(application?.getLastSearchedMovie(), false)
+            searchKey = application?.getLastSearchedMovie()
         }
     }
 
@@ -74,10 +78,16 @@ class SearchFragment : Fragment() {
         movie_sv?.clearFocus()
         movie_sv?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
+                adapter.setMovies(ArrayList())
+                (activity?.application as MainApplication?)?.setLastMovieResult(ArrayList())
                 CoroutineScope(Dispatchers.Main).launch {
                     delay(300)  //debounce timeOut
-                    searchViewModel.searchMovie(query.toString())
-                    (activity?.application as MainApplication?)?.setLastSearchedMovie(query.toString())
+                    searchKey = query.toString()
+                    pageNumber = 1
+                    query?.let {
+                        searchViewModel.searchMovie(it)
+                        (activity?.application as MainApplication?)?.setLastSearchedMovie(it)
+                    }
                 }
                 return false
             }
@@ -101,6 +111,17 @@ class SearchFragment : Fragment() {
             }
         })
         recyclerView.adapter = adapter
+        recyclerView.addOnScrollListener(object : InfiniteScrollListener(layoutManager) {
+            override fun doLoadMoreData(firstVisibleItemPosition: Int) {
+                setDataLoading(isLoading)
+                recyclerView.scrollToPosition(firstVisibleItemPosition)
+                pageNumber++
+                if (searchKey != null) {
+                    searchViewModel.searchMovie(searchKey.toString(), pageNumber)
+                    isLoading = true
+                }
+            }
+        })
     }
 
     private fun updateView(resource: Resource<List<Movies.Movie>>?) {
@@ -108,8 +129,8 @@ class SearchFragment : Fragment() {
         isLoading = false
         when(resource?.status) {
             Status.SUCCESS -> resource.data?.let {
-                adapter.setMovies(it)
-                (activity?.application as MainApplication?)?.setLastMovieResult(it)
+                adapter.updateMovies(it)
+                (activity?.application as MainApplication?)?.addLastMovieResult(it)
             }!!
             Status.ERROR -> {
                 adapter.setMovies(ArrayList())
