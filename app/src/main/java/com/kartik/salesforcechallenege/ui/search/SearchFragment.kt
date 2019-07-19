@@ -48,8 +48,8 @@ class SearchFragment : Fragment() {
         val movieDao = MovieRoomDb.getDatabase(activity?.applicationContext!!).movieDao()
         val repository = MovieRepository(movieDao, MovieRemoteServiceImpl())
         searchViewModel = ViewModelProviders.of(this, SearchViewModelFactory(repository))[SearchViewModel::class.java]
-        searchViewModel.movieList.observe(::getLifecycle, ::updateView)
-
+        searchViewModel.movieList.observe(::getLifecycle, ::updateList)
+        searchViewModel.favMovie.observe(::getLifecycle, ::updateFavoriteMovie)
         setupSearchView(root.movie_sv)
         setupRecyclerView(root.movie_list)
         return root
@@ -104,6 +104,7 @@ class SearchFragment : Fragment() {
         adapter = MovieListAdapter(ArrayList(), object : MovieListAdapter.OnClickListener {
             override fun onMovieFav(movie: Movies.Movie) {
                 // fav a movie
+                searchViewModel.favoriteAMovie(movie)
             }
 
             override fun onMovieClick(movie: Movies.Movie) {
@@ -124,7 +125,7 @@ class SearchFragment : Fragment() {
         })
     }
 
-    private fun updateView(resource: Resource<List<Movies.Movie>>?) {
+    private fun updateList(resource: Resource<List<Movies.Movie>>?) {
         progress.visibility = View.GONE
         isLoading = false
         when(resource?.status) {
@@ -140,5 +141,17 @@ class SearchFragment : Fragment() {
         }
     }
 
+    private fun updateFavoriteMovie(resource: Resource<Movies.Movie>?) {
+        when(resource?.status) {
+            Status.SUCCESS -> {
+                resource.data?.isFavoriteLoading = false
+            }
+            Status.ERROR -> {
+                resource.data?.isFavoriteLoading = false
+            }
+            Status.LOADING -> resource.data?.isFavoriteLoading = true
+        }
+        adapter.notifyDataSetChanged()
+    }
 
 }

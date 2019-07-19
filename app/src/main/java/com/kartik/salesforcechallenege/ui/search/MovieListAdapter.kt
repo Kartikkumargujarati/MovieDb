@@ -53,6 +53,11 @@ class MovieListAdapter(private var movies: ArrayList<Movies.Movie>, private val 
             }
             itemView.setOnClickListener { onClickListener.onMovieClick(movie) }
             itemView.movie_fav_iv.setOnClickListener { onClickListener.onMovieFav(movie) }
+            if (movie.isFavoriteLoading) {
+                itemView.movie_fav_pb.visibility = View.VISIBLE
+            } else {
+                itemView.movie_fav_pb.visibility = View.GONE
+            }
         }
     }
 

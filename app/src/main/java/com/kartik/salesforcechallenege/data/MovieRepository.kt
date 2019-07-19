@@ -39,6 +39,26 @@ class MovieRepository(private val movieDao: MovieDao, private val remoteService:
 
     }
 
+    fun favoriteAMovie(movie: Movies.Movie, result: MutableLiveData<Resource<Movies.Movie>>) {
+        result.value = Resource.loading(movie)
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                //if already favorited, un-favorite. If not already favorited, favorite it.
+                if (!movie.isFavorite) {
+                    movieDao.addMovieToFavorites(movie)
+                } else {
+                    movieDao.removeMovieFromFavorites(movie)
+                }
+                withContext(Dispatchers.Main) {
+                    movie.isFavorite = !movie.isFavorite
+                    result.value = Resource.success(movie)
+                }
+            } catch (exception: Exception) {
+                withContext(Dispatchers.Main) { result.value = Resource.error("Could not favorite a Movie", movie) }
+            }
+        }
+    }
+
     private suspend fun returnData(movieList: Movies.MovieList? = null, result: MutableLiveData<Resource<List<Movies.Movie>>>, status: Status) {
         when(status) {
             Status.SUCCESS -> {

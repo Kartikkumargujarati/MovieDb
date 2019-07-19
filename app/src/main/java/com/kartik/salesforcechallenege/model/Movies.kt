@@ -34,6 +34,7 @@ class Movies {
         @SerializedName("imdbID")
         @PrimaryKey
         val imdbID: String,
-        var isFavorite: Boolean
+        var isFavorite: Boolean = false,
+        var isFavoriteLoading: Boolean
     ) : Parcelable
 }
