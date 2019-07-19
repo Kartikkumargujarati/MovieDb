@@ -1,5 +1,6 @@
 package com.kartik.salesforcechallenege.ui.favorites
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -16,6 +17,8 @@ import com.kartik.salesforcechallenege.data.Status
 import com.kartik.salesforcechallenege.data.local.MovieRoomDb
 import com.kartik.salesforcechallenege.data.remote.MovieRemoteServiceImpl
 import com.kartik.salesforcechallenege.model.Movies
+import com.kartik.salesforcechallenege.ui.details.MovieDetailsActivity
+import com.kartik.salesforcechallenege.ui.details.MovieDetailsFragment
 import com.kartik.salesforcechallenege.ui.search.MovieListAdapter
 import kotlinx.android.synthetic.main.fragment_favorites.*
 import kotlinx.android.synthetic.main.fragment_search.progress
@@ -57,6 +60,7 @@ class FavoritesFragment : Fragment() {
 
             override fun onMovieClick(movie: Movies.Movie) {
                 // navigate to details
+                startDetailsActivity(movie)
             }
         })
         recyclerView.adapter = adapter
@@ -79,5 +83,11 @@ class FavoritesFragment : Fragment() {
             }
             Status.LOADING -> progress.visibility = View.VISIBLE
         }
+    }
+
+    private fun startDetailsActivity(movie: Movies.Movie) {
+        val intent = Intent(activity, MovieDetailsActivity::class.java)
+        intent.putExtra(MovieDetailsFragment.ARG_MOVIE, movie)
+        startActivity(intent)
     }
 }

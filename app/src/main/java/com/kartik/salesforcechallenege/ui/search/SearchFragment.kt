@@ -1,11 +1,13 @@
 package com.kartik.salesforcechallenege.ui.search
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.widget.SearchView
+import androidx.core.app.ActivityOptionsCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
@@ -18,6 +20,8 @@ import com.kartik.salesforcechallenege.data.Status
 import com.kartik.salesforcechallenege.data.local.MovieRoomDb
 import com.kartik.salesforcechallenege.data.remote.MovieRemoteServiceImpl
 import com.kartik.salesforcechallenege.model.Movies
+import com.kartik.salesforcechallenege.ui.details.MovieDetailsActivity
+import com.kartik.salesforcechallenege.ui.details.MovieDetailsFragment
 import com.kartik.salesforcechallenege.util.InfiniteScrollListener
 import kotlinx.android.synthetic.main.fragment_search.*
 import kotlinx.android.synthetic.main.fragment_search.view.*
@@ -109,6 +113,7 @@ class SearchFragment : Fragment() {
 
             override fun onMovieClick(movie: Movies.Movie) {
                 // navigate to details
+                startDetailsActivity(movie)
             }
         })
         recyclerView.adapter = adapter
@@ -158,6 +163,12 @@ class SearchFragment : Fragment() {
             Status.LOADING -> resource.data?.isFavoriteLoading = true
         }
         adapter.notifyDataSetChanged()
+    }
+
+    private fun startDetailsActivity(movie: Movies.Movie) {
+        val intent = Intent(activity, MovieDetailsActivity::class.java)
+        intent.putExtra(MovieDetailsFragment.ARG_MOVIE, movie)
+        startActivity(intent)
     }
 
 }
