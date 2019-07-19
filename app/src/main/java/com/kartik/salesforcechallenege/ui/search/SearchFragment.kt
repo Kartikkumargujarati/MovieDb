@@ -98,7 +98,7 @@ class SearchFragment : Fragment() {
 
     private fun setupRecyclerView(recyclerView: RecyclerView) {
         recyclerView.setHasFixedSize(true)
-        val layoutManager  = GridLayoutManager(activity, 1)
+        val layoutManager  = GridLayoutManager(activity, resources.getInteger(R.integer.columns_in_list))
         recyclerView.layoutManager = layoutManager
 
         adapter = MovieListAdapter(ArrayList(), object : MovieListAdapter.OnClickListener {
@@ -136,7 +136,7 @@ class SearchFragment : Fragment() {
                 } else {
                     empty_search_tv.visibility = View.GONE
                     adapter.updateMovies(resource.data)
-                    (activity?.application as MainApplication?)?.addLastMovieResult(resource.data)
+                    (activity?.application as MainApplication?)?.setLastMovieResult(resource.data)
                 }
             }
             Status.ERROR -> {

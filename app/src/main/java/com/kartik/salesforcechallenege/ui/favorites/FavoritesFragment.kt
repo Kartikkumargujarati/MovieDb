@@ -46,7 +46,7 @@ class FavoritesFragment : Fragment() {
 
     private fun setupRecyclerView(recyclerView: RecyclerView) {
         recyclerView.setHasFixedSize(true)
-        val layoutManager  = GridLayoutManager(activity, 1)
+        val layoutManager  = GridLayoutManager(activity, resources.getInteger(R.integer.columns_in_list))
         recyclerView.layoutManager = layoutManager
 
         adapter = MovieListAdapter(ArrayList(), object : MovieListAdapter.OnClickListener {
