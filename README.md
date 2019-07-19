@@ -32,4 +32,9 @@ Lifecycle, ViewModel, Room and Kotlin Coroutines.
 * Write test
 * Move dimensions from layouts to a dimes file
 
+#### Building the APK:
+1. Navigate to the project's root directory from command line.
+2. From command line,  run "./gradlew assembleDebug".
+3. Once build is complete, an .apk is generated in the "app/build/outputs/apk/debug/app-debug.apk"
+4. You can install the apk on to an Android device by running "adb install app-debug.apk" from the command line.
 
