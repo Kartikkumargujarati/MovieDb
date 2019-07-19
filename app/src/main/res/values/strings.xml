@@ -11,4 +11,5 @@
     <string name="no_search_movies_found">Could not find movies that match your search.</string>
     <string name="search_movies">Search for movies by name.</string>
     <string name="no_fav_movies">You did not favorite any movie yet.</string>
+    <string name="title_activity_movie_details">Movie Details</string>
 </resources>
