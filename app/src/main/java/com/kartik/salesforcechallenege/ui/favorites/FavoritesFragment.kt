@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.kartik.salesforcechallenege.MainApplication
 import com.kartik.salesforcechallenege.R
 import com.kartik.salesforcechallenege.data.MovieRepository
 import com.kartik.salesforcechallenege.data.Resource
@@ -56,6 +57,15 @@ class FavoritesFragment : Fragment() {
             override fun onMovieFav(movie: Movies.Movie) {
                 // un-fav a movie
                 favoritesViewModel.unFavoriteAMovie(movie)
+                //update the movie in the local list (if present)
+                val movies = (activity?.application as MainApplication?)?.getLastMovieResult()
+                if (movies != null) {
+                    for (currentMovie in movies)
+                        if (currentMovie.imdbID == movie.imdbID) {
+                            currentMovie.isFavorite = false
+                            break
+                        }
+                }
             }
 
             override fun onMovieClick(movie: Movies.Movie) {
