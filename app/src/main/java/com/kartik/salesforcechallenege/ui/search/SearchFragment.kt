@@ -95,7 +95,6 @@ class SearchFragment : Fragment() {
         })
     }
 
-
     private fun setupRecyclerView(recyclerView: RecyclerView) {
         recyclerView.setHasFixedSize(true)
         val layoutManager  = GridLayoutManager(activity, 1)
@@ -129,10 +128,15 @@ class SearchFragment : Fragment() {
         progress.visibility = View.GONE
         isLoading = false
         when(resource?.status) {
-            Status.SUCCESS -> resource.data?.let {
-                adapter.updateMovies(it)
-                (activity?.application as MainApplication?)?.addLastMovieResult(it)
-            }!!
+            Status.SUCCESS -> {
+                if (resource.data == null) {
+                    empty_search_tv.text = resources.getText(R.string.no_search_movies_found)
+                } else {
+                    empty_search_tv.visibility = View.GONE
+                    adapter.updateMovies(resource.data)
+                    (activity?.application as MainApplication?)?.addLastMovieResult(resource.data)
+                }
+            }
             Status.ERROR -> {
                 adapter.setMovies(ArrayList())
                 Toast.makeText(activity, resource.message, Toast.LENGTH_LONG).show()

@@ -8,11 +8,29 @@ package com.kartik.salesforcechallenege.ui.favorites
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import com.kartik.salesforcechallenege.data.MovieRepository
+import com.kartik.salesforcechallenege.data.Resource
+import com.kartik.salesforcechallenege.model.Movies
 
-class FavoritesViewModel : ViewModel() {
+class FavoritesViewModel(private val repository: MovieRepository) : ViewModel() {
 
-    private val _text = MutableLiveData<String>().apply {
-        value = "This is dashboard Fragment"
+    private val _favMovieList = MutableLiveData<Resource<List<Movies.Movie>>>()
+    val favMovieList : LiveData<Resource<List<Movies.Movie>>>
+        get() = _favMovieList
+    init {
+        repository.getFavoriteMovies(_favMovieList)
     }
-    val text: LiveData<String> = _text
+
+    fun unFavoriteAMovie(movie: Movies.Movie) {
+        repository.unFavoriteAMovieFromFavorite(movie, _favMovieList)
+    }
+}
+
+class FavoritesViewModelFactory(private val repository: MovieRepository) :
+    ViewModelProvider.NewInstanceFactory() {
+
+    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+        return FavoritesViewModel(repository) as T
+    }
 }

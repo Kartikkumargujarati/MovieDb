@@ -35,6 +35,6 @@ class Movies {
         @PrimaryKey
         val imdbID: String,
         var isFavorite: Boolean = false,
-        var isFavoriteLoading: Boolean
+        var isFavoriteLoading: Boolean = false
     ) : Parcelable
 }
