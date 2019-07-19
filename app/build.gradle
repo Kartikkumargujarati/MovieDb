@@ -10,6 +10,10 @@ apply plugin: 'kotlin-kapt'
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.0"
+    Properties props = new Properties()
+    def propFile = new File('app/keys.properties')
+    props.load(new FileInputStream(propFile))
+
     defaultConfig {
         applicationId "com.kartik.salesforcechallenege"
         minSdkVersion 23
@@ -20,9 +24,14 @@ android {
     }
     buildTypes {
         release {
+            buildConfigField "String", "OMDB_API_KEY", props['omdb_api_key']
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+        debug {
+            buildConfigField "String", "OMDB_API_KEY", props['omdb_api_key']
+        }
+
     }
     androidExtensions {
         experimental = true

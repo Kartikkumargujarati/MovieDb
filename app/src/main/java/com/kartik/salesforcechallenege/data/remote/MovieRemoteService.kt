@@ -12,10 +12,10 @@ import retrofit2.http.Query
 
 interface MovieRemoteService {
 
-    @GET("?apikey=5947c361")
-    suspend fun searchMovies(@Query("s") name: String, @Query("page") start: String): Response<Movies.MovieList>
+    @GET("?")
+    suspend fun searchMovies(@Query("s") name: String, @Query("page") start: String, @Query("apikey") apiKey: String): Response<Movies.MovieList>
 
-    @GET("?apikey=5947c361&plot=full")
-    suspend fun getMovieDetails(@Query("i") name: String): Response<Movies.MovieDetails>
+    @GET("?plot=full")
+    suspend fun getMovieDetails(@Query("i") name: String, @Query("apikey") apiKey: String): Response<Movies.MovieDetails>
 
 }

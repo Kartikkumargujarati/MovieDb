@@ -6,6 +6,7 @@
 package com.kartik.salesforcechallenege.data
 
 import androidx.lifecycle.MutableLiveData
+import com.kartik.salesforcechallenege.BuildConfig
 import com.kartik.salesforcechallenege.data.local.MovieDao
 import com.kartik.salesforcechallenege.data.remote.MovieRemoteServiceImpl
 import com.kartik.salesforcechallenege.model.Movies
@@ -21,7 +22,7 @@ class MovieRepository(private val movieDao: MovieDao, private val remoteService:
         result.value = Resource.loading(null)
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val response = remoteService.getRemoteService().searchMovies(searchKey, pageNumber.toString())
+                val response = remoteService.getRemoteService().searchMovies(searchKey, pageNumber.toString(), BuildConfig.OMDB_API_KEY)
                 if (response.isSuccessful && response.code() == 200) {
                     returnData(response.body()!!, result, Status.SUCCESS)
                 } else {
@@ -114,7 +115,7 @@ class MovieRepository(private val movieDao: MovieDao, private val remoteService:
         result.value = Resource.loading(null)
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val response = remoteService.getRemoteService().getMovieDetails(movieId)
+                val response = remoteService.getRemoteService().getMovieDetails(movieId, BuildConfig.OMDB_API_KEY)
                 if (response.isSuccessful && response.code() == 200) {
                     withContext(Dispatchers.Main) {
                         result.value = Resource.success(response.body()!!)
