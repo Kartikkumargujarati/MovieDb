@@ -92,7 +92,11 @@ class SearchFragment : Fragment() {
         recyclerView.layoutManager = layoutManager
 
         adapter = MovieListAdapter(ArrayList(), object : MovieListAdapter.OnClickListener {
-            override fun onItemClick(movie: Movies.Movie) {
+            override fun onMovieFav(movie: Movies.Movie) {
+                // fav a movie
+            }
+
+            override fun onMovieClick(movie: Movies.Movie) {
                 // navigate to details
             }
         })
