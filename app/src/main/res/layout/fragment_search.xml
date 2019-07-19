@@ -25,6 +25,15 @@
             layout="@layout/movie_list"
             android:layout_below="@+id/movie_sv"/>
 
+    <TextView
+            android:id="@+id/empty_search_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:text="@string/search_movies"
+            android:visibility="visible"/>
+
     <ProgressBar
             android:id="@+id/progress"
             android:layout_width="wrap_content"
