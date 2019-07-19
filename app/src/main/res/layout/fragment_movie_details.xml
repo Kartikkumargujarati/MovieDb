@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Created by Kartik Kumar Gujarati on 7/19/19 12:58 PM
+  ~ Copyright (c) 2019 . All rights reserved.
+  -->
+
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+    <TextView
+            android:id="@+id/movie_name_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="24sp"
+            style="?android:attr/textAppearanceLarge"
+            android:textIsSelectable="true"/>
+
+    <TextView
+            android:id="@+id/movie_release_date_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textIsSelectable="true"
+            android:layout_marginTop="5dp"
+            android:lines="1"
+            style="?android:attr/textAppearanceSmall"/>
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="5dp">
+
+        <TextView
+                android:id="@+id/movie_imdb_rating_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="?android:attr/textAppearanceSmall"
+                android:textIsSelectable="true"/>
+
+        <TextView
+                android:id="@+id/movie_rated_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                style="?android:attr/textAppearanceSmall"
+                android:textIsSelectable="true"/>
+
+    </LinearLayout>
+
+    <TextView
+            android:id="@+id/movie_genre_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="?android:attr/textAppearanceSmall"
+            android:layout_marginTop="5dp"
+            android:textIsSelectable="true"/>
+
+    <TextView
+            android:id="@+id/movie_plot_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="?android:attr/textAppearance"
+            android:layout_marginTop="20dp"
+            android:textSize="18sp"
+            android:textIsSelectable="true"/>
+
+    <TextView
+            android:id="@+id/movie_staring_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="?android:attr/textAppearanceSmall"
+            android:layout_marginTop="20dp"
+            android:textIsSelectable="true"/>
+
+    <TextView
+            android:id="@+id/movie_director_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="?android:attr/textAppearanceSmall"
+            android:layout_marginTop="5dp"
+            android:textIsSelectable="true"/>
+
+    <TextView
+            android:id="@+id/movie_writer_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="?android:attr/textAppearanceSmall"
+            android:layout_marginTop="5dp"
+            android:textIsSelectable="true"/>
+
+    <ProgressBar
+            android:id="@+id/progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_gravity="center"
+            android:visibility="gone"/>
+
+</LinearLayout>

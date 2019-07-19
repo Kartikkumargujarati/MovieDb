@@ -110,4 +110,23 @@ class MovieRepository(private val movieDao: MovieDao, private val remoteService:
         }
     }
 
+    fun getMovieDetails(movieId: String, result: MutableLiveData<Resource<Movies.MovieDetails>>) {
+        result.value = Resource.loading(null)
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val response = remoteService.getRemoteService().getMovieDetails(movieId)
+                if (response.isSuccessful && response.code() == 200) {
+                    withContext(Dispatchers.Main) {
+                        result.value = Resource.success(response.body()!!)
+                    }
+                } else {
+                    // handle error
+                    withContext(Dispatchers.Main) { result.value = Resource.error("Could not load Movie Details", null) }
+                }
+            } catch (exception: Exception) {
+                // handle error
+                withContext(Dispatchers.Main) { result.value = Resource.error("Could not load Movie Details", null) }
+            }
+        }
+    }
 }

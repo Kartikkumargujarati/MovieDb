@@ -12,4 +12,10 @@
     <string name="search_movies">Search for movies by name.</string>
     <string name="no_fav_movies">You did not favorite any movie yet.</string>
     <string name="title_activity_movie_details">Movie Details</string>
+    <string name="released_label_txt">Released: %s</string>
+    <string name="imdb_label_txt">IMDB Rating: %s</string>
+    <string name="rated_label_txt">Rated: %s</string>
+    <string name="staring_label_txt">Staring: %s</string>
+    <string name="director_label_txt">Director: %s</string>
+    <string name="writer_label_txt">Writer: %s</string>
 </resources>

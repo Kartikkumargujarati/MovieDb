@@ -11,8 +11,16 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.lifecycle.ViewModelProviders
 import com.kartik.salesforcechallenege.R
+import com.kartik.salesforcechallenege.data.MovieRepository
+import com.kartik.salesforcechallenege.data.Resource
+import com.kartik.salesforcechallenege.data.Status
+import com.kartik.salesforcechallenege.data.local.MovieRoomDb
+import com.kartik.salesforcechallenege.data.remote.MovieRemoteServiceImpl
 import com.kartik.salesforcechallenege.model.Movies
+import kotlinx.android.synthetic.main.fragment_movie_details.*
 
 /**
  * A placeholder fragment containing a simple view.
@@ -21,6 +29,7 @@ class MovieDetailsFragment : Fragment() {
 
     private var movie: Movies.Movie? = null
     private var rootView: View? = null
+    private lateinit var movieDetailsViewModel: MovieDetailsViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,6 +47,11 @@ class MovieDetailsFragment : Fragment() {
     ): View? {
         val root = inflater.inflate(R.layout.fragment_movie_details, container, false)
         rootView = root
+        val movieDao = MovieRoomDb.getDatabase(activity?.applicationContext!!).movieDao()
+        val repository = MovieRepository(movieDao, MovieRemoteServiceImpl())
+        movieDetailsViewModel = ViewModelProviders.of(this, MovieDetailsViewModelFactory(repository))[MovieDetailsViewModel::class.java]
+        movieDetailsViewModel.movieDetails.observe(::getLifecycle, ::updateView)
+        movieDetailsViewModel.getMovieDetails(movie?.imdbID.toString())
         return rootView
     }
 
@@ -47,6 +61,27 @@ class MovieDetailsFragment : Fragment() {
             return true
         }
         return false
+    }
+
+    private fun updateView(resource: Resource<Movies.MovieDetails>?) {
+        progress.visibility = View.GONE
+        when(resource?.status) {
+            Status.SUCCESS -> resource.data?.let {
+                movie_name_tv.text = it.title
+                movie_release_date_tv.text = String.format(resources.getString(R.string.released_label_txt), it.released)
+                movie_imdb_rating_tv.text = String.format(resources.getString(R.string.imdb_label_txt), it.imdbRating)
+                movie_rated_tv.text = String.format(resources.getString(R.string.rated_label_txt), it.rated)
+                movie_genre_tv.text = it.genre
+                movie_plot_tv.text = it.plot
+                movie_staring_tv.text = String.format(resources.getString(R.string.staring_label_txt), it.actors)
+                movie_director_tv.text = String.format(resources.getString(R.string.director_label_txt), it.director)
+                movie_writer_tv.text = String.format(resources.getString(R.string.writer_label_txt), it.writer)
+            }!!
+            Status.ERROR -> {
+                Toast.makeText(activity, resource.message, Toast.LENGTH_LONG).show()
+            }
+            Status.LOADING -> progress.visibility = View.VISIBLE
+        }
     }
 
     companion object {
