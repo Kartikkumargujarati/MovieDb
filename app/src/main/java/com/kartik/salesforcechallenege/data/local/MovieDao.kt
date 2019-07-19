@@ -18,5 +18,5 @@ interface MovieDao {
     fun getAllFavoriteMovies(): List<Movies.Movie>
 
     @Delete
-    fun removeMovieFromFavotites(movie: Movies.Movie)
+    fun removeMovieFromFavorites(movie: Movies.Movie)
 }

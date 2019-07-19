@@ -15,7 +15,7 @@ class Movies {
     @Parcelize
     data class MovieList(
         @SerializedName("Search")
-        val movies: List<Movie?>?,
+        val movies: List<Movie>?,
         @SerializedName("totalResults")
         val totalResults: String?
     ) : Parcelable
@@ -33,6 +33,7 @@ class Movies {
         val year: String?,
         @SerializedName("imdbID")
         @PrimaryKey
-        val imdbID: String?
+        val imdbID: String,
+        var isFavorite: Boolean
     ) : Parcelable
 }
