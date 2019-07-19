@@ -8,7 +8,7 @@
     <string name="title_search">Search</string>
     <string name="title_favorites">Favorites</string>
     <string name="search_hint">Search Movies</string>
-    <string name="no_search_movies_found">Count not find movies that match your search.</string>
+    <string name="no_search_movies_found">Could not find movies that match your search.</string>
     <string name="search_movies">Search for movies by name.</string>
     <string name="no_fav_movies">You did not favorite any movie yet.</string>
 </resources>

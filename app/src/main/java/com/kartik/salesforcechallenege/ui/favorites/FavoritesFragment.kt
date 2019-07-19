@@ -68,6 +68,8 @@ class FavoritesFragment : Fragment() {
             Status.SUCCESS -> resource.data?.let {
                 if (it.isNotEmpty()) {
                     empty_fav_tv.visibility = View.GONE
+                } else {
+                    empty_fav_tv.visibility = View.VISIBLE
                 }
                 adapter.setMovies(it)
             }!!

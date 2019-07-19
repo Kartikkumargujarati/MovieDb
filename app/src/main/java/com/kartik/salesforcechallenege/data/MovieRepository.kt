@@ -89,6 +89,17 @@ class MovieRepository(private val movieDao: MovieDao, private val remoteService:
     }
 
     private suspend fun returnData(movieList: Movies.MovieList? = null, result: MutableLiveData<Resource<List<Movies.Movie>>>, status: Status) {
+        val favMovieList = movieDao.getAllFavoriteMovies()
+        if (movieList?.movies != null) {
+            for (movie in movieList.movies) {
+                for (favMov in favMovieList) {
+                    if (movie.imdbID == favMov.imdbID) {
+                        movie.isFavorite = true
+                    }
+                }
+            }
+        }
+
         when(status) {
             Status.SUCCESS -> {
                 withContext(Dispatchers.Main) { result.value = Resource.success(movieList?.movies) }

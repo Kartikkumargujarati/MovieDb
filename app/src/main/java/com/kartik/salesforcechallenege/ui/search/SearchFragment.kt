@@ -60,6 +60,7 @@ class SearchFragment : Fragment() {
         val application = (activity?.application as MainApplication?)
         if(application?.getLastMovieResult()?.isEmpty() == false) {
             (activity?.application as MainApplication?)?.getLastMovieResult()?.let { adapter.setMovies(it) }
+            empty_search_tv.visibility = View.GONE
         }
         if(!application?.getLastSearchedMovie().isNullOrBlank()) {
             rootView.movie_sv.onActionViewExpanded()
@@ -130,6 +131,7 @@ class SearchFragment : Fragment() {
         when(resource?.status) {
             Status.SUCCESS -> {
                 if (resource.data == null) {
+                    empty_search_tv.visibility = View.VISIBLE
                     empty_search_tv.text = resources.getText(R.string.no_search_movies_found)
                 } else {
                     empty_search_tv.visibility = View.GONE
