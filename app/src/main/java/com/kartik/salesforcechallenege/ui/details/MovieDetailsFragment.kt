@@ -23,7 +23,8 @@ import com.kartik.salesforcechallenege.model.Movies
 import kotlinx.android.synthetic.main.fragment_movie_details.*
 
 /**
- * A placeholder fragment containing a simple view.
+ * A fragment representing a single Movie detail screen.
+ * This fragment is contained in a [MovieDetailsActivity]
  */
 class MovieDetailsFragment : Fragment() {
 

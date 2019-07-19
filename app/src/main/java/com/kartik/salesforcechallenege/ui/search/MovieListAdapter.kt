@@ -14,6 +14,9 @@ import com.kartik.salesforcechallenege.R
 import com.kartik.salesforcechallenege.model.Movies
 import kotlinx.android.synthetic.main.movie_list_item.view.*
 
+/**
+ * A RecyclerView adapter for list of  movies.
+ */
 class MovieListAdapter(private var movies: ArrayList<Movies.Movie>, private val onClickListener: OnClickListener) : RecyclerView.Adapter<RecyclerView.ViewHolder?>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {

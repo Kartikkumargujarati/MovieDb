@@ -31,6 +31,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+/**
+ * A fragment representing a a list of movies from search results
+ * This fragment is contained in a [MainActivity]
+ */
 class SearchFragment : Fragment() {
 
     private lateinit var searchViewModel: SearchViewModel
@@ -39,7 +43,6 @@ class SearchFragment : Fragment() {
     private var isLoading: Boolean = false
     private var searchKey: String? = null
     private var pageNumber: Int = 1
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -141,7 +144,7 @@ class SearchFragment : Fragment() {
                 } else {
                     empty_search_tv.visibility = View.GONE
                     adapter.updateMovies(resource.data)
-                    (activity?.application as MainApplication?)?.setLastMovieResult(resource.data)
+                    (activity?.application as MainApplication?)?.addLastMovieResult(resource.data)
                 }
             }
             Status.ERROR -> {

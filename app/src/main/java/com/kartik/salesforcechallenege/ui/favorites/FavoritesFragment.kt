@@ -25,6 +25,10 @@ import kotlinx.android.synthetic.main.fragment_favorites.*
 import kotlinx.android.synthetic.main.fragment_search.progress
 import kotlinx.android.synthetic.main.movie_list.view.*
 
+/**
+ * A fragment representing a a list of favorited movies/
+ * This fragment is contained in a [MainActivity]
+ */
 class FavoritesFragment : Fragment() {
 
     private lateinit var favoritesViewModel: FavoritesViewModel

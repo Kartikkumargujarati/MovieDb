@@ -16,8 +16,12 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.lang.Exception
 
+/*
+* The MovieRepository class acts as the data layer for the entire app. This class knows the source of data and how to fetch it.
+* */
 class MovieRepository(private val movieDao: MovieDao, private val remoteService: MovieRemoteServiceImpl) {
 
+    // Get Movies from remote server given a search keyword.
     fun getMoviesFromSearch(searchKey: String, pageNumber: Int, result: MutableLiveData<Resource<List<Movies.Movie>>>) {
         result.value = Resource.loading(null)
         CoroutineScope(Dispatchers.IO).launch {
@@ -36,6 +40,7 @@ class MovieRepository(private val movieDao: MovieDao, private val remoteService:
         }
     }
 
+    // Pull  favorited movies from room db.
     fun getFavoriteMovies(result: MutableLiveData<Resource<List<Movies.Movie>>>) {
         result.value = Resource.loading(null)
         CoroutineScope(Dispatchers.IO).launch {
@@ -50,6 +55,7 @@ class MovieRepository(private val movieDao: MovieDao, private val remoteService:
         }
     }
 
+    // Favorite or un-favorite a movie and update the object appropriately. Used from Search List
     fun favoriteAMovie(movie: Movies.Movie, result: MutableLiveData<Resource<Movies.Movie>>) {
         result.value = Resource.loading(movie)
         CoroutineScope(Dispatchers.IO).launch {
@@ -72,6 +78,7 @@ class MovieRepository(private val movieDao: MovieDao, private val remoteService:
         }
     }
 
+    // Unfavorite a previously Favorited Movie. Used from the Favorites list.
     fun unFavoriteAMovieFromFavorite(movie: Movies.Movie, result: MutableLiveData<Resource<List<Movies.Movie>>>) {
         result.value = Resource.loading(null)
         CoroutineScope(Dispatchers.IO).launch {
@@ -89,6 +96,28 @@ class MovieRepository(private val movieDao: MovieDao, private val remoteService:
         }
     }
 
+    // Get Movie Details from remote server from an imdbID.
+    fun getMovieDetails(movieId: String, result: MutableLiveData<Resource<Movies.MovieDetails>>) {
+        result.value = Resource.loading(null)
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val response = remoteService.getRemoteService().getMovieDetails(movieId, BuildConfig.OMDB_API_KEY)
+                if (response.isSuccessful && response.code() == 200) {
+                    withContext(Dispatchers.Main) {
+                        result.value = Resource.success(response.body()!!)
+                    }
+                } else {
+                    // handle error
+                    withContext(Dispatchers.Main) { result.value = Resource.error("Could not load Movie Details", null) }
+                }
+            } catch (exception: Exception) {
+                // handle error
+                withContext(Dispatchers.Main) { result.value = Resource.error("Could not load Movie Details", null) }
+            }
+        }
+    }
+
+    // Helper function
     private suspend fun returnData(movieList: Movies.MovieList? = null, result: MutableLiveData<Resource<List<Movies.Movie>>>, status: Status) {
         val favMovieList = movieDao.getAllFavoriteMovies()
         if (movieList?.movies != null) {
@@ -107,26 +136,6 @@ class MovieRepository(private val movieDao: MovieDao, private val remoteService:
             }
             Status.ERROR -> {
                 withContext(Dispatchers.Main) { result.value = Resource.error("Unable to load data") }
-            }
-        }
-    }
-
-    fun getMovieDetails(movieId: String, result: MutableLiveData<Resource<Movies.MovieDetails>>) {
-        result.value = Resource.loading(null)
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val response = remoteService.getRemoteService().getMovieDetails(movieId, BuildConfig.OMDB_API_KEY)
-                if (response.isSuccessful && response.code() == 200) {
-                    withContext(Dispatchers.Main) {
-                        result.value = Resource.success(response.body()!!)
-                    }
-                } else {
-                    // handle error
-                    withContext(Dispatchers.Main) { result.value = Resource.error("Could not load Movie Details", null) }
-                }
-            } catch (exception: Exception) {
-                // handle error
-                withContext(Dispatchers.Main) { result.value = Resource.error("Could not load Movie Details", null) }
             }
         }
     }

@@ -32,7 +32,9 @@ class MainApplication : Application() {
     }
 
     fun addLastMovieResult(movies: List<Movies.Movie>) {
-        lastMovieResult.addAll(movies)
+        if (!lastMovieResult.containsAll(movies)) {
+            lastMovieResult.addAll(movies)
+        }
     }
     fun setLastMovieResult(movies: List<Movies.Movie>) {
         lastMovieResult = movies as ArrayList<Movies.Movie>

@@ -14,6 +14,9 @@ import com.kartik.salesforcechallenege.model.Movies
 
 import kotlinx.android.synthetic.main.activity_movie_details.*
 
+/**
+ * An activity representing a single Movie detail screen.
+ */
 class MovieDetailsActivity : AppCompatActivity() {
     private var movie: Movies.Movie? = null
 
