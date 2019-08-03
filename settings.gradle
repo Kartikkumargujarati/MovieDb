@@ -1,2 +1,2 @@
 include ':app'
-rootProject.name='SalesforceChallenege'
+rootProject.name='OpenMovieDB'

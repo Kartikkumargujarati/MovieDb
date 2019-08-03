@@ -15,7 +15,7 @@ android {
     props.load(new FileInputStream(propFile))
 
     defaultConfig {
-        applicationId "com.kartik.salesforcechallenege"
+        applicationId "com.kartik.openmoviedb"
         minSdkVersion 23
         targetSdkVersion 29
         versionCode 1
