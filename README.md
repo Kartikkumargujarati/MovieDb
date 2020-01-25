@@ -21,7 +21,6 @@ Navigation, Lifecycle, ViewModel, Room and Kotlin Coroutines.
 
 #### Notes:
 * Built using Android Studio 3.5 beta 4.
-* Assumed "imdbID"s are unique. Used them as primary keys for Room.
 
 #### Building the APK:
 1. Navigate to the project's root directory from command line.
