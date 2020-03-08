@@ -5,13 +5,12 @@
 
 package com.kartik.openmoviedb.ui.favorites
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.*
 import com.kartik.openmoviedb.data.MovieRepository
 import com.kartik.openmoviedb.data.Resource
 import com.kartik.openmoviedb.model.Movies
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class FavoritesViewModel(private val repository: MovieRepository) : ViewModel() {
 
@@ -19,11 +18,17 @@ class FavoritesViewModel(private val repository: MovieRepository) : ViewModel() 
     val favMovieList : LiveData<Resource<List<Movies.Movie>>>
         get() = _favMovieList
     init {
-        repository.getFavoriteMovies(_favMovieList)
+        _favMovieList.value = Resource.loading(null)
+        viewModelScope.launch(Dispatchers.IO) {
+            _favMovieList.postValue(repository.getFavoriteMovies())
+        }
     }
 
     fun unFavoriteAMovie(movie: Movies.Movie) {
-        repository.unFavoriteAMovieFromFavorite(movie, _favMovieList)
+        _favMovieList.value = Resource.loading(null)
+        viewModelScope.launch(Dispatchers.IO) {
+            _favMovieList.postValue(repository.unFavoriteAMovieFromFavorite(movie))
+        }
     }
 }
 

@@ -56,8 +56,8 @@ class MovieDetailsFragment : Fragment() {
         return rootView
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        if (item?.itemId == android.R.id.home) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
             activity?.finish()
             return true
         }

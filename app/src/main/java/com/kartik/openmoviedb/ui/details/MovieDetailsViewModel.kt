@@ -5,13 +5,12 @@
 
 package com.kartik.openmoviedb.ui.details
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.*
 import com.kartik.openmoviedb.data.MovieRepository
 import com.kartik.openmoviedb.data.Resource
 import com.kartik.openmoviedb.model.Movies
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class MovieDetailsViewModel(private val repository: MovieRepository) : ViewModel()  {
     private val _movieDetails = MutableLiveData<Resource<Movies.MovieDetails>>()
@@ -19,7 +18,10 @@ class MovieDetailsViewModel(private val repository: MovieRepository) : ViewModel
         get() = _movieDetails
 
     fun getMovieDetails(movieId: String) {
-        repository.getMovieDetails(movieId, _movieDetails)
+        _movieDetails.value = Resource.loading(null)
+        viewModelScope.launch(Dispatchers.IO) {
+            _movieDetails.postValue(repository.getMovieDetails(movieId))
+        }
     }
 }
 
