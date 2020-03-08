@@ -12,7 +12,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import com.kartik.openmoviedb.R
 import com.kartik.openmoviedb.data.MovieRepository
 import com.kartik.openmoviedb.data.Resource
@@ -50,7 +50,7 @@ class MovieDetailsFragment : Fragment() {
         rootView = root
         val movieDao = MovieRoomDb.getDatabase(activity?.applicationContext!!).movieDao()
         val repository = MovieRepository(movieDao, MovieRemoteServiceImpl())
-        movieDetailsViewModel = ViewModelProviders.of(this, MovieDetailsViewModelFactory(repository))[MovieDetailsViewModel::class.java]
+        movieDetailsViewModel = ViewModelProvider(this, MovieDetailsViewModelFactory(repository))[MovieDetailsViewModel::class.java]
         movieDetailsViewModel.movieDetails.observe(::getLifecycle, ::updateView)
         movieDetailsViewModel.getMovieDetails(movie?.imdbID.toString())
         return rootView

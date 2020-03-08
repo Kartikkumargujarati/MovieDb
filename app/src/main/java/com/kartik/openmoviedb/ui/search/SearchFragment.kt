@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.kartik.openmoviedb.MainApplication
@@ -53,7 +53,7 @@ class SearchFragment : Fragment() {
         rootView = root
         val movieDao = MovieRoomDb.getDatabase(activity?.applicationContext!!).movieDao()
         val repository = MovieRepository(movieDao, MovieRemoteServiceImpl())
-        searchViewModel = ViewModelProviders.of(this, SearchViewModelFactory(repository))[SearchViewModel::class.java]
+        searchViewModel = ViewModelProvider(this, SearchViewModelFactory(repository))[SearchViewModel::class.java]
         searchViewModel.movieList.observe(::getLifecycle, ::updateList)
         searchViewModel.favMovie.observe(::getLifecycle, ::updateFavoriteMovie)
         setupSearchView(root.movie_sv)

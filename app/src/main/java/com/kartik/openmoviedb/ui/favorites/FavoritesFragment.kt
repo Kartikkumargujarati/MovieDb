@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.kartik.openmoviedb.MainApplication
@@ -44,7 +44,7 @@ class FavoritesFragment : Fragment() {
 
         val movieDao = MovieRoomDb.getDatabase(activity?.applicationContext!!).movieDao()
         val repository = MovieRepository(movieDao, MovieRemoteServiceImpl())
-        favoritesViewModel = ViewModelProviders.of(this, FavoritesViewModelFactory(repository))[FavoritesViewModel::class.java]
+        favoritesViewModel = ViewModelProvider(this, FavoritesViewModelFactory(repository))[FavoritesViewModel::class.java]
         favoritesViewModel.favMovieList.observe(::getLifecycle, ::updateList)
         setupRecyclerView(root.movie_list)
         return root
