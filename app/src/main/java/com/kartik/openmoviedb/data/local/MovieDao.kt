@@ -5,6 +5,7 @@
 
 package com.kartik.openmoviedb.data.local
 
+import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.kartik.openmoviedb.model.Movies
 
@@ -15,7 +16,7 @@ interface MovieDao {
     fun addMovieToFavorites(movie: Movies.Movie)
 
     @Query("SELECT * from movie_table")
-    fun getAllFavoriteMovies(): List<Movies.Movie>
+    fun getAllFavoriteMovies(): LiveData<List<Movies.Movie>>
 
     @Delete
     fun removeMovieFromFavorites(movie: Movies.Movie)
