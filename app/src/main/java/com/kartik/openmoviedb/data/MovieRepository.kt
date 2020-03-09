@@ -5,15 +5,12 @@
 
 package com.kartik.openmoviedb.data
 
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.liveData
 import com.kartik.openmoviedb.BuildConfig
 import com.kartik.openmoviedb.data.local.MovieDao
 import com.kartik.openmoviedb.data.remote.MovieRemoteServiceImpl
 import com.kartik.openmoviedb.model.Movies
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.lang.Exception
 
 /*
@@ -22,25 +19,26 @@ import java.lang.Exception
 class MovieRepository(private val movieDao: MovieDao, private val remoteService: MovieRemoteServiceImpl) {
 
     // Get Movies from remote server given a search keyword.
-    suspend fun getMoviesFromSearch(searchKey: String, pageNumber: Int): Resource<List<Movies.Movie>> {
-        return try {
+    fun getMoviesFromSearch(searchKey: String, pageNumber: Int): LiveData<Resource<List<Movies.Movie>>> = liveData {
+        emit(Resource.loading(null))
+        try {
             val response = remoteService.getRemoteService().searchMovies(searchKey, pageNumber.toString(), BuildConfig.OMDB_API_KEY)
             if (response.isSuccessful && response.code() == 200) {
-                returnData(response.body()!!)
+                emit(returnData(response.body()!!))
             } else {
                 // handle error
-                Resource.error("Unable to load data")
+                emit(Resource.error("Unable to load data"))
             }
         } catch (exception: Exception) {
             // handle error
-            Resource.error("Unable to load data")
+            emit(Resource.error("Unable to load data"))
         }
     }
 
     // Pull  favorited movies from room db.
     fun getFavoriteMovies(): Resource<List<Movies.Movie>> {
         return try {
-            val movies = movieDao.getAllFavoriteMovies()
+            val movies = movieDao.getAllFavoriteMovies().value
             Resource.success(movies)
         } catch (exception: Exception) {
             Resource.error("Could not pull favorite movies.", null)
@@ -70,7 +68,7 @@ class MovieRepository(private val movieDao: MovieDao, private val remoteService:
         return try {
             // un-favorite a favorite movie
             movieDao.removeMovieFromFavorites(movie)
-            val movies = movieDao.getAllFavoriteMovies()
+            val movies = movieDao.getAllFavoriteMovies().value
             movie.isFavorite = !movie.isFavorite
             Resource.success(movies)
         } catch (exception: Exception) {
@@ -96,12 +94,14 @@ class MovieRepository(private val movieDao: MovieDao, private val remoteService:
 
     // Helper function
     private fun returnData(movieList: Movies.MovieList?): Resource<List<Movies.Movie>> {
-        val favMovieList = movieDao.getAllFavoriteMovies()
+        val favMovieList = movieDao.getAllFavoriteMovies().value
         if (movieList?.movies != null) {
             for (movie in movieList.movies) {
-                for (favMov in favMovieList) {
-                    if (movie.imdbID == favMov.imdbID) {
-                        movie.isFavorite = true
+                if (favMovieList != null) {
+                    for (favMov in favMovieList) {
+                        if (movie.imdbID == favMov.imdbID) {
+                            movie.isFavorite = true
+                        }
                     }
                 }
             }

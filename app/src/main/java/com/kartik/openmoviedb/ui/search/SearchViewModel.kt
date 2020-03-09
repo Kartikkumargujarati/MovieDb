@@ -14,19 +14,20 @@ import kotlinx.coroutines.launch
 
 class SearchViewModel(private val repository: MovieRepository) : ViewModel() {
 
-    private val _movieList = MutableLiveData<Resource<List<Movies.Movie>>>()
-    val movieList : LiveData<Resource<List<Movies.Movie>>>
-        get() = _movieList
+    private var pageNumber = 1
+    private val searchKey = MutableLiveData<String>()
+
+    val movieList: LiveData<Resource<List<Movies.Movie>>>  = searchKey.switchMap { key ->
+        repository.getMoviesFromSearch(key, pageNumber)
+    }
 
     private val _favMovie = MutableLiveData<Resource<Movies.Movie>>()
     val favMovie : LiveData<Resource<Movies.Movie>>
         get() = _favMovie
 
     fun searchMovie(searchKey: String, page: Int = 1) {
-        _movieList.value = Resource.loading(null)
-        viewModelScope.launch(Dispatchers.IO) {
-            _movieList.postValue(repository.getMoviesFromSearch(searchKey, page))
-        }
+        this.searchKey.value = searchKey
+        pageNumber = page
     }
 
     fun favoriteAMovie(movie: Movies.Movie) {
