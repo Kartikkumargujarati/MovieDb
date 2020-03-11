@@ -46,8 +46,8 @@ class MovieRepository(private val movieDao: MovieDao, private val remoteService:
     }
 
     // Favorite or un-favorite a movie and update the object appropriately. Used from Search List
-    fun favoriteAMovie(movie: Movies.Movie): Resource<Movies.Movie> {
-        return try {
+    fun favoriteAMovie(movie: Movies.Movie): LiveData<Resource<Movies.Movie>> = liveData {
+        try {
             movie.isFavoriteLoading = false
             //if already favorited, un-favorite. If not already favorited, favorite it.
             if (!movie.isFavorite) {
@@ -57,9 +57,9 @@ class MovieRepository(private val movieDao: MovieDao, private val remoteService:
                 movie.isFavorite = false
                 movieDao.removeMovieFromFavorites(movie)
             }
-            Resource.success(movie)
+            emit(Resource.success(movie))
         } catch (exception: Exception) {
-            Resource.error("Could not favorite a Movie", movie)
+            emit(Resource.error("Could not favorite a Movie", movie))
         }
     }
 
