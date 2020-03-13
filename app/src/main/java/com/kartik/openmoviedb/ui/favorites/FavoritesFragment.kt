@@ -46,6 +46,7 @@ class FavoritesFragment : Fragment() {
         val repository = MovieRepository(movieDao, MovieRemoteServiceImpl())
         favoritesViewModel = ViewModelProvider(this, FavoritesViewModelFactory(repository))[FavoritesViewModel::class.java]
         favoritesViewModel.favMovieList.observe(::getLifecycle, ::updateList)
+        favoritesViewModel.unFavMovie.observe(::getLifecycle, ::updateFavMovie)
         setupRecyclerView(root.movie_list)
         return root
     }
@@ -90,6 +91,20 @@ class FavoritesFragment : Fragment() {
                     empty_fav_tv.visibility = View.VISIBLE
                 }
                 adapter.setMovies(it)
+            }!!
+            Status.ERROR -> {
+                adapter.setMovies(ArrayList())
+                Toast.makeText(activity, resource.message, Toast.LENGTH_LONG).show()
+            }
+            Status.LOADING -> progress.visibility = View.VISIBLE
+        }
+    }
+
+    private fun updateFavMovie(resource: Resource<Movies.Movie>?) {
+        progress.visibility = View.GONE
+        when(resource?.status) {
+            Status.SUCCESS -> resource.data?.let {
+                adapter.removeMovie(it)
             }!!
             Status.ERROR -> {
                 adapter.setMovies(ArrayList())
