@@ -11,6 +11,8 @@ import com.kartik.openmoviedb.BuildConfig
 import com.kartik.openmoviedb.data.local.MovieDao
 import com.kartik.openmoviedb.data.remote.MovieRemoteServiceImpl
 import com.kartik.openmoviedb.model.Movies
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.lang.Exception
 
 /*
@@ -24,7 +26,7 @@ class MovieRepository(private val movieDao: MovieDao, private val remoteService:
         try {
             val response = remoteService.getRemoteService().searchMovies(searchKey, pageNumber.toString(), BuildConfig.OMDB_API_KEY)
             if (response.isSuccessful && response.code() == 200) {
-                emit(returnData(response.body()!!))
+                emitSource(returnData(response.body()!!))
             } else {
                 // handle error
                 emit(Resource.error("Unable to load data"))
@@ -38,16 +40,16 @@ class MovieRepository(private val movieDao: MovieDao, private val remoteService:
     // Pull  favorited movies from room db.
     fun getFavoriteMovies(): Resource<List<Movies.Movie>> {
         return try {
-            val movies = movieDao.getAllFavoriteMovies().value
-            Resource.success(movies)
+            val movies = movieDao.getAllFavoriteMovies()
+            (Resource.success(movies))
         } catch (exception: Exception) {
-            Resource.error("Could not pull favorite movies.", null)
+            (Resource.error("Could not pull favorite movies.", null))
         }
     }
 
     // Favorite or un-favorite a movie and update the object appropriately. Used from Search List
-    fun favoriteAMovie(movie: Movies.Movie): LiveData<Resource<Movies.Movie>> = liveData {
-        try {
+    fun favoriteAMovie(movie: Movies.Movie): Resource<Movies.Movie> {
+        return try {
             movie.isFavoriteLoading = false
             //if already favorited, un-favorite. If not already favorited, favorite it.
             if (!movie.isFavorite) {
@@ -57,20 +59,19 @@ class MovieRepository(private val movieDao: MovieDao, private val remoteService:
                 movie.isFavorite = false
                 movieDao.removeMovieFromFavorites(movie)
             }
-            emit(Resource.success(movie))
+            Resource.success(movie)
         } catch (exception: Exception) {
-            emit(Resource.error("Could not favorite a Movie", movie))
+            Resource.error("Could not favorite a Movie", movie)
         }
     }
 
     // Unfavorite a previously Favorited Movie. Used from the Favorites list.
-    fun unFavoriteAMovieFromFavorite(movie: Movies.Movie): Resource<List<Movies.Movie>> {
+    fun unFavoriteAMovieFromFavorite(movie: Movies.Movie): Resource<Movies.Movie> {
         return try {
             // un-favorite a favorite movie
             movieDao.removeMovieFromFavorites(movie)
-            val movies = movieDao.getAllFavoriteMovies().value
             movie.isFavorite = !movie.isFavorite
-            Resource.success(movies)
+            Resource.success(movie)
         } catch (exception: Exception) {
             Resource.error("Could not un-favorite a Movie", null)
         }
@@ -93,11 +94,11 @@ class MovieRepository(private val movieDao: MovieDao, private val remoteService:
     }
 
     // Helper function
-    private fun returnData(movieList: Movies.MovieList?): Resource<List<Movies.Movie>> {
-        val favMovieList = movieDao.getAllFavoriteMovies().value
-        if (movieList?.movies != null) {
-            for (movie in movieList.movies) {
-                if (favMovieList != null) {
+    private fun returnData(movieList: Movies.MovieList?): LiveData<Resource<List<Movies.Movie>>> = liveData {
+        withContext(Dispatchers.IO) {
+            val favMovieList = movieDao.getAllFavoriteMovies()
+            if (movieList?.movies != null) {
+                for (movie in movieList.movies) {
                     for (favMov in favMovieList) {
                         if (movie.imdbID == favMov.imdbID) {
                             movie.isFavorite = true
@@ -105,7 +106,7 @@ class MovieRepository(private val movieDao: MovieDao, private val remoteService:
                     }
                 }
             }
+            emit(Resource.success(movieList?.movies))
         }
-        return Resource.success(movieList?.movies)
     }
 }
