@@ -38,42 +38,51 @@ class MovieRepository(private val movieDao: MovieDao, private val remoteService:
     }
 
     // Pull  favorited movies from room db.
-    fun getFavoriteMovies(): Resource<List<Movies.Movie>> {
-        return try {
-            val movies = movieDao.getAllFavoriteMovies()
-            (Resource.success(movies))
-        } catch (exception: Exception) {
-            (Resource.error("Could not pull favorite movies.", null))
+    fun getFavoriteMovies(): LiveData<Resource<List<Movies.Movie>>> = liveData  {
+        emit(Resource.loading(null))
+        withContext(Dispatchers.IO) {
+            try {
+                val movies = movieDao.getAllFavoriteMovies()
+                emit(Resource.success(movies))
+            } catch (exception: Exception) {
+                emit(Resource.error("Could not pull favorite movies.", null))
+            }
         }
     }
 
     // Favorite or un-favorite a movie and update the object appropriately. Used from Search List
-    fun favoriteAMovie(movie: Movies.Movie): Resource<Movies.Movie> {
-        return try {
-            movie.isFavoriteLoading = false
-            //if already favorited, un-favorite. If not already favorited, favorite it.
-            if (!movie.isFavorite) {
-                movie.isFavorite = true
-                movieDao.addMovieToFavorites(movie)
-            } else {
-                movie.isFavorite = false
-                movieDao.removeMovieFromFavorites(movie)
+    fun favoriteAMovie(movie: Movies.Movie): LiveData<Resource<Movies.Movie>> = liveData {
+        emit(Resource.loading(null))
+        withContext(Dispatchers.IO) {
+            try {
+                movie.isFavoriteLoading = false
+                //if already favorited, un-favorite. If not already favorited, favorite it.
+                if (!movie.isFavorite) {
+                    movie.isFavorite = true
+                    movieDao.addMovieToFavorites(movie)
+                } else {
+                    movie.isFavorite = false
+                    movieDao.removeMovieFromFavorites(movie)
+                }
+                emit(Resource.success(movie))
+            } catch (exception: Exception) {
+                emit(Resource.error("Could not favorite a Movie", movie))
             }
-            Resource.success(movie)
-        } catch (exception: Exception) {
-            Resource.error("Could not favorite a Movie", movie)
         }
     }
 
     // Unfavorite a previously Favorited Movie. Used from the Favorites list.
-    fun unFavoriteAMovieFromFavorite(movie: Movies.Movie): Resource<Movies.Movie> {
-        return try {
-            // un-favorite a favorite movie
-            movieDao.removeMovieFromFavorites(movie)
-            movie.isFavorite = !movie.isFavorite
-            Resource.success(movie)
-        } catch (exception: Exception) {
-            Resource.error("Could not un-favorite a Movie", null)
+    fun unFavoriteAMovieFromFavorite(movie: Movies.Movie): LiveData<Resource<Movies.Movie>> = liveData {
+        emit(Resource.loading(null))
+        // un-favorite a favorite movie
+        withContext(Dispatchers.IO) {
+            try {
+                movieDao.removeMovieFromFavorites(movie)
+                movie.isFavorite = !movie.isFavorite
+                emit(Resource.success(movie))
+            } catch (exception: Exception) {
+                emit(Resource.error("Could not un-favorite a Movie", null))
+            }
         }
     }
 
