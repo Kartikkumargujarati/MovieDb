@@ -24,10 +24,14 @@ class FavoritesViewModel(private val repository: MovieRepository) : ViewModel() 
         }
     }
 
+    private val _unFavMovie = MutableLiveData<Resource<Movies.Movie>>()
+    val unFavMovie: LiveData<Resource<Movies.Movie>>
+        get() = _unFavMovie
+
     fun unFavoriteAMovie(movie: Movies.Movie) {
-        _favMovieList.value = Resource.loading(null)
+        _unFavMovie.value = Resource.loading(null)
         viewModelScope.launch(Dispatchers.IO) {
-            _favMovieList.postValue(repository.unFavoriteAMovieFromFavorite(movie))
+            _unFavMovie.postValue(repository.unFavoriteAMovieFromFavorite(movie))
         }
     }
 }
