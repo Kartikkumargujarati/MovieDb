@@ -9,30 +9,33 @@ import androidx.lifecycle.*
 import com.kartik.openmoviedb.data.MovieRepository
 import com.kartik.openmoviedb.data.Resource
 import com.kartik.openmoviedb.model.Movies
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class SearchViewModel(private val repository: MovieRepository) : ViewModel() {
 
     private var pageNumber = 1
     private val searchKey = MutableLiveData<String>()
-    private val _favMovie = MutableLiveData<Movies.Movie>()
 
     val movieList: LiveData<Resource<List<Movies.Movie>>>  = searchKey.switchMap { key ->
         repository.getMoviesFromSearch(key, pageNumber)
     }
 
-    val favMovie : LiveData<Resource<Movies.Movie>> = _favMovie.switchMap { movie ->
-        repository.favoriteAMovie(movie)
+    private val _favMovie = MutableLiveData<Resource<Movies.Movie>>()
+    val favMovie : LiveData<Resource<Movies.Movie>>
+        get() = _favMovie
+
+    fun favoriteAMovie(movie: Movies.Movie) {
+        _favMovie.value = Resource.loading(null)
+        viewModelScope.launch(Dispatchers.IO) {
+            _favMovie.postValue(repository.favoriteAMovie(movie))
+        }
     }
 
     fun searchMovie(searchKey: String, page: Int = 1) {
         this.searchKey.value = searchKey
         pageNumber = page
     }
-
-    fun favoriteAMovie(movie: Movies.Movie) {
-        _favMovie.value = movie
-    }
-
 }
 
 class SearchViewModelFactory(private val repository: MovieRepository) :
