@@ -9,30 +9,18 @@ import androidx.lifecycle.*
 import com.kartik.openmoviedb.data.MovieRepository
 import com.kartik.openmoviedb.data.Resource
 import com.kartik.openmoviedb.model.Movies
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 class FavoritesViewModel(private val repository: MovieRepository) : ViewModel() {
 
-    private val _favMovieList = MutableLiveData<Resource<List<Movies.Movie>>>()
-    val favMovieList : LiveData<Resource<List<Movies.Movie>>>
-        get() = _favMovieList
-    init {
-        _favMovieList.value = Resource.loading(null)
-        viewModelScope.launch(Dispatchers.IO) {
-            _favMovieList.postValue(repository.getFavoriteMovies())
-        }
+    val favMovieList : LiveData<Resource<List<Movies.Movie>>> = repository.getFavoriteMovies()
+
+    private val _unFavMovie = MutableLiveData<Movies.Movie>()
+    val unFavMovie: LiveData<Resource<Movies.Movie>> = _unFavMovie.switchMap { movie ->
+        repository.unFavoriteAMovieFromFavorite(movie)
     }
 
-    private val _unFavMovie = MutableLiveData<Resource<Movies.Movie>>()
-    val unFavMovie: LiveData<Resource<Movies.Movie>>
-        get() = _unFavMovie
-
     fun unFavoriteAMovie(movie: Movies.Movie) {
-        _unFavMovie.value = Resource.loading(null)
-        viewModelScope.launch(Dispatchers.IO) {
-            _unFavMovie.postValue(repository.unFavoriteAMovieFromFavorite(movie))
-        }
+        _unFavMovie.value = movie
     }
 }
 
