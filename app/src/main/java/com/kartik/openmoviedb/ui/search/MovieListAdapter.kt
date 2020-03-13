@@ -43,6 +43,11 @@ class MovieListAdapter(private var movies: ArrayList<Movies.Movie>, private val 
         (holder as MovieViewHolder).bindData(movies[position])
     }
 
+    fun removeMovie(movie: Movies.Movie) {
+        movies.remove(movie)
+        notifyDataSetChanged()
+    }
+
     internal inner class MovieViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bindData(movie: Movies.Movie) {
             Glide.with(itemView.context).load(movie.poster).into(itemView.movie_poster_iv)
