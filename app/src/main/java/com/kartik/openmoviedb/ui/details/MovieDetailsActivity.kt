@@ -26,7 +26,6 @@ class MovieDetailsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_movie_details)
         setSupportActionBar(detail_toolbar)
 
-
         // Show the Up button in the action bar.
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         movie = intent.getParcelableExtra(MovieDetailsFragment.ARG_MOVIE)

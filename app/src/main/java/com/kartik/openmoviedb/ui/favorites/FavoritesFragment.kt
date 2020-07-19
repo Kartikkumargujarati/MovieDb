@@ -39,7 +39,6 @@ class FavoritesFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
         val root = inflater.inflate(R.layout.fragment_favorites, container, false)
 
         val movieDao = MovieRoomDb.getDatabase(activity?.applicationContext!!).movieDao()

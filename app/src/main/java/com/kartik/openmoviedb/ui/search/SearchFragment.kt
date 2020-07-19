@@ -48,7 +48,6 @@ class SearchFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
         val root = inflater.inflate(R.layout.fragment_search, container, false)
         rootView = root
         val movieDao = MovieRoomDb.getDatabase(activity?.applicationContext!!).movieDao()

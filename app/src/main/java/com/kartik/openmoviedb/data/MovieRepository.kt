@@ -5,7 +5,6 @@
 
 package com.kartik.openmoviedb.data
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
 import com.kartik.openmoviedb.BuildConfig
 import com.kartik.openmoviedb.data.local.MovieDao
@@ -21,7 +20,7 @@ import java.lang.Exception
 class MovieRepository(private val movieDao: MovieDao, private val remoteService: MovieRemoteServiceImpl) {
 
     // Get Movies from remote server given a search keyword.
-    fun getMoviesFromSearch(searchKey: String, pageNumber: Int): LiveData<Resource<List<Movies.Movie>>> = liveData {
+    fun getMoviesFromSearch(searchKey: String, pageNumber: Int) = liveData {
         emit(Resource.loading(null))
         try {
             val response = remoteService.getRemoteService().searchMovies(searchKey, pageNumber.toString(), BuildConfig.OMDB_API_KEY)
@@ -38,7 +37,7 @@ class MovieRepository(private val movieDao: MovieDao, private val remoteService:
     }
 
     // Pull  favorited movies from room db.
-    fun getFavoriteMovies(): LiveData<Resource<List<Movies.Movie>>> = liveData  {
+    fun getFavoriteMovies() = liveData  {
         emit(Resource.loading(null))
         withContext(Dispatchers.IO) {
             try {
@@ -51,7 +50,7 @@ class MovieRepository(private val movieDao: MovieDao, private val remoteService:
     }
 
     // Favorite or un-favorite a movie and update the object appropriately. Used from Search List
-    fun favoriteAMovie(movie: Movies.Movie): LiveData<Resource<Movies.Movie>> = liveData {
+    fun favoriteAMovie(movie: Movies.Movie)= liveData {
         emit(Resource.loading(null))
         withContext(Dispatchers.IO) {
             try {
@@ -72,7 +71,7 @@ class MovieRepository(private val movieDao: MovieDao, private val remoteService:
     }
 
     // Unfavorite a previously Favorited Movie. Used from the Favorites list.
-    fun unFavoriteAMovieFromFavorite(movie: Movies.Movie): LiveData<Resource<Movies.Movie>> = liveData {
+    fun unFavoriteAMovieFromFavorite(movie: Movies.Movie) = liveData {
         emit(Resource.loading(null))
         // un-favorite a favorite movie
         withContext(Dispatchers.IO) {
@@ -103,7 +102,7 @@ class MovieRepository(private val movieDao: MovieDao, private val remoteService:
     }
 
     // Helper function
-    private fun returnData(movieList: Movies.MovieList?): LiveData<Resource<List<Movies.Movie>>> = liveData {
+    private fun returnData(movieList: Movies.MovieList?) = liveData {
         withContext(Dispatchers.IO) {
             val favMovieList = movieDao.getAllFavoriteMovies()
             if (movieList?.movies != null) {
