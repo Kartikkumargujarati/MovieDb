@@ -41,8 +41,7 @@ class MovieRepository(private val movieDao: MovieDao, private val remoteService:
         emit(Resource.loading(null))
         withContext(Dispatchers.IO) {
             try {
-                val movies = movieDao.getAllFavoriteMovies()
-                emit(Resource.success(movies))
+                emit(Resource.success(movieDao.getAllFavoriteMovies()))
             } catch (exception: Exception) {
                 emit(Resource.error("Could not pull favorite movies.", null))
             }
@@ -104,14 +103,11 @@ class MovieRepository(private val movieDao: MovieDao, private val remoteService:
     // Helper function
     private fun returnData(movieList: Movies.MovieList?) = liveData {
         withContext(Dispatchers.IO) {
-            val favMovieList = movieDao.getAllFavoriteMovies()
-            if (movieList?.movies != null) {
-                for (movie in movieList.movies) {
-                    for (favMov in favMovieList) {
-                        if (movie.imdbID == favMov.imdbID) {
-                            movie.isFavorite = true
-                        }
-                    }
+            val favMovieList = mutableListOf<String>()
+            movieDao.getAllFavoriteMovies().forEach { favMovieList.add(it.imdbID) }
+            movieList?.movies?.forEach {
+                if (favMovieList.contains(it.imdbID)) {
+                    it.isFavorite = true
                 }
             }
             emit(Resource.success(movieList?.movies))
